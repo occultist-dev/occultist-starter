@@ -1,0 +1,15 @@
+{
+  "name": "occultist-starter",
+  "version": "0.0.1",
+  "description": "Starter occultist.dev project",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.12.2",
+  "dependencies": {
+    "@longform/longform": "^0.0.6",
+    "@occultist/occultist": "^0.0.7",
+    "@octiron/octiron": "^0.0.7",
+    "jsonld": "^9.0.0"
+  }
+}
