@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "es6",
+    "paths": {
+      "#*": ["./*"]
+    }
+  },
+  "include": [
+    "./**/*.ts"
+  ]
+}

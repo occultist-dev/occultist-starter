@@ -1,0 +1,11 @@
+
+
+@doctype:: html
+html[lang=en]::
+  @mount:: head
+  head::
+  body::
+    @mount:: body
+    div::
+    @mount:: footer
+    footer::

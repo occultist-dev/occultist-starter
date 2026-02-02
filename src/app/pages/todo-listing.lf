@@ -1,0 +1,19 @@
+
+#head [
+  title:: Todos
+  meta::
+    [name=description]
+    [content=Todos]
+]
+
+#header
+header::
+  hgroup::
+    h1:: Todos
+  nav::
+    a[href=/]:: Home
+    a[href=/todos][aria-current=page]:: Todos
+
+#footer
+div::
+  Todos footer

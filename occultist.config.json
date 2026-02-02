@@ -1,0 +1,10 @@
+{
+  "port": 4000,
+  "rootURL": "http://localhost:4000/",
+  "vocab": "https://schema.example.com/",
+  "aliases": {
+    "oct": "https://schema.occultist.dev/",
+    "scm": "https://schema.org/"
+  }
+}
+

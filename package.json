@@ -1,15 +1,48 @@
 {
   "name": "occultist-starter",
   "version": "0.0.1",
+  "type": "module",
   "description": "Starter occultist.dev project",
   "keywords": [],
   "author": "",
   "license": "MIT",
   "packageManager": "pnpm@10.12.2",
+  "scripts": {
+    "dev": "node --watch src/api/api.ts",
+    "deno": "deno --allow-all --watch src/api/api.ts",
+    "deno:native": "deno --allow-all --watch src/api/deno.ts",
+    "bun": "bun --watch src/api/api.ts",
+    "bun:native": "bun --watch src/api/bun.ts"
+  },
+  "imports": {
+    "#*": "./src/app/*"
+  },
   "dependencies": {
     "@longform/longform": "^0.0.6",
-    "@occultist/occultist": "^0.0.7",
-    "@octiron/octiron": "^0.0.7",
-    "jsonld": "^9.0.0"
+    "@occultist/extensions": "^0.0.2",
+    "@occultist/mini-jsonld": "^0.0.1",
+    "@occultist/occultist": "^0.0.13",
+    "@octiron/octiron": "^0.0.10",
+    "acorn": "^8.15.0",
+    "astring": "^1.9.0",
+    "better-sqlite3": "^12.6.2",
+    "jsdom": "^27.4.0",
+    "json-ptr": "^3.1.1",
+    "jsonld": "^9.0.0",
+    "mithril": "^2.3.8",
+    "mithril-node-render": "^3.0.2",
+    "terser": "^5.46.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3",
+    "uri-templates": "^0.2.0",
+    "zimmerframe": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/bun": "^1.3.5",
+    "@types/deno": "^2.5.0",
+    "@types/jsonld": "^1.5.15",
+    "@types/mithril": "^2.2.7",
+    "@types/node": "^25.0.3"
   }
 }

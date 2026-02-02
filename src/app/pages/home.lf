@@ -1,0 +1,19 @@
+
+#head [
+  title:: Home
+  meta::
+    [name=description]
+    [content=Home]
+]
+
+#header
+header::
+  hgroup::
+    h1:: Home
+  nav::
+    a[href=/][aria-current=page]:: Home
+    a[href=/todos]:: Todos
+
+#footer
+div::
+  Home footer

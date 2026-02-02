@@ -1,0 +1,8 @@
+ignoredBuiltDependencies:
+  - better-sqlite3
+  - deno
+
+overrides:
+  '@octiron/octiron': link:../../.local/share/pnpm/global/5/node_modules/@octiron/octiron
+
+useNodeVersion: 24.12.0
