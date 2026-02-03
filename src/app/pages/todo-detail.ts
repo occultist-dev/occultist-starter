@@ -5,7 +5,8 @@ import {renderLongform} from '#utils/renderLongform.ts';
 
 export const head: SSRView = ({ o, location }) => {
   return [
-    o.enter(location.toString(), { mainEntity: true }, o => [
+    o.enter(location, {
+    }, o => [
       o.select('oct:title', o => m('title', o.value as string)),
       o.select('oct:description', o => m('meta', {
         name: 'description',
@@ -19,11 +20,15 @@ export const body: SSRView = ({ o, location }) => {
   let messageEl: m.Children;
   const message = location.searchParams.get('message');
 
-  if (message != null)
+  if (message != null) {
     messageEl = m('aside.callout.success', message);
+  }
 
-
-  return o.enter(location.toString(), { mainEntity: true }, o => [
+  return o.enter(location, {
+    mainEntity: true,
+    fallback: m('h1', 'Not found'),
+    loading: m('h1', 'Loading'),
+  }, o => [
     m('header', [
       o.select('oct:title', o => m('title', o.value as string)),
     ]),

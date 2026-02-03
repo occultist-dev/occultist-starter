@@ -8,6 +8,7 @@ import {devExtension} from "../extensions.ts";
 import {join} from "node:path";
 import {appDir} from "../../config.ts";
 import {readFile} from "node:fs/promises";
+import {BadRequestError, NotFoundError} from "@occultist/occultist";
 
 
 type PotentialAction = {
@@ -193,8 +194,9 @@ rootScope.http.post('/todos', { name: 'create-todo' })
       description: ctx.payload.description,
     });
 
-    if (todo == null)
-      throw new Error('Could not create todo');
+    if (todo == null) {
+      throw new BadRequestError('Could not create todo');
+    }
 
     ctx.status = 302;
     ctx.headers.set('Location', `${ctx.url}/${todo.uuid}?action=created`);
