@@ -1,5 +1,5 @@
 import {registry} from "../registry.ts";
-import {devExtension} from "../extensions.ts";
+import {dev} from "../extensions.ts";
 import {memoryCache} from "../cache.ts";
 import {contextBuilder} from "@occultist/occultist";
 import {schemas, typeDefs} from "../typeDefs.ts";
@@ -28,10 +28,17 @@ export const getContext = registry.http.get('/context')
 
 registry.http.get('/')
   .public()
-  .handle(devExtension.handlePage('home'))
+  .cache(memoryCache.etag())
+  .handle(dev.html('home'))
   .handle('text/longform', async (ctx) => {
     ctx.body = await readFile(join(appDir, 'pages/home.lf'));
   })
+  .handle(dev.jsonld({
+    name: 'Example API',
+    description: 'This is a linked data API.',
+    todoListing: todoListing.url(),
+    actions: rootScope.url(),
+  }))
   .handle(['application/ld+json', 'application/json'], (ctx) => {
     ctx.body = JSON.stringify({
       '@context': getContext.url(),

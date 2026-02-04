@@ -4,16 +4,13 @@ import {renderLongform} from '#utils/renderLongform.ts';
 
 
 export const head: SSRView = ({ o, location }) => {
-  return [
-    o.enter(location, {
-    }, o => [
-      o.select('oct:title', o => m('title', o.value as string)),
-      o.select('oct:description', o => m('meta', {
-        name: 'description',
-        content: o.value as string,
-      })),
-    ]),
-  ];
+  return o.enter(location, o => [
+    m('title', o.get<string>('oct:title')),
+    o.select('oct:description', o => m('meta', {
+      name: 'description',
+      content: o.value,
+    })),
+  ]);
 }
 
 export const body: SSRView = ({ o, location }) => {
@@ -30,7 +27,12 @@ export const body: SSRView = ({ o, location }) => {
     loading: m('h1', 'Loading'),
   }, o => [
     m('header', [
-      o.select('oct:title', o => m('title', o.value as string)),
+      m('h1', o.get<string>('oct:title')),
+
+      m('nav',
+        m('li', m('a[href=/]', 'Home')),
+        m('li', m('a[href=/todos]', 'Todos')),
+      ),
     ]),
 
     messageEl,
@@ -43,4 +45,4 @@ export const body: SSRView = ({ o, location }) => {
   ]);
 }
 
-export const footer = renderLongform('footer');
+//export const footer = renderLongform('footer');

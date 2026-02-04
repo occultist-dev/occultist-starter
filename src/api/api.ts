@@ -17,6 +17,6 @@ server.listen(port, () => {
   const { address, port } = server.address() as AddressInfo;
 
   console.log(`Listening on http://${address}:${port}`);
-  
   registry.finalize();
+
 });

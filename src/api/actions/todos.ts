@@ -4,11 +4,12 @@ import {registry} from "../registry.ts";
 import {rootScope} from "../scopes.ts";
 import {typeDefs} from "../typeDefs.ts";
 import {getContext} from "./root.ts";
-import {devExtension} from "../extensions.ts";
+import {dev} from "../extensions.ts";
 import {join} from "node:path";
 import {appDir} from "../../config.ts";
 import {readFile} from "node:fs/promises";
-import {BadRequestError, NotFoundError} from "@occultist/occultist";
+import {BadRequestError} from "@occultist/occultist";
+import {memoryCache} from "../cache.ts";
 
 
 type PotentialAction = {
@@ -74,24 +75,18 @@ export const todoListing = registry.http.get('/todos{?page,pageSize}')
       },
     },
   })
-  .handle(devExtension.handlePage('todo-listing'))
+  .handle(dev.html('todo-listing'))
   .handle('text/longform', async (ctx) => {
     ctx.body =  await readFile(join(appDir, 'pages/todo-listing.lf'));
   })
-  .handle('application/ld+json', async ctx => {
-    const members = listTodosStatement
-      .all({
+  .handle(dev.jsonld(ctx => ({
+    '@context': getContext.url(),
+    members: listTodosStatement .all({
         url: ctx.url,
         limit: ctx.payload.limit ?? 10,
         offset: ctx.payload.offset ?? 0,
       });
-
-    ctx.body = JSON.stringify({
-      '@context': getContext.url(),
-      '@id': ctx.url,
-      members,
-    });
-  });
+  })));
 
  const getTodoStatement = db.prepare<{
    ctx: string;
@@ -100,7 +95,7 @@ export const todoListing = registry.http.get('/todos{?page,pageSize}')
  }, Todo>(`
    select
        :ctx                                  "@context"
-     , :url || '/' || t.uuid                 "@id"
+     , :url                                  "@id"
      , 'Todo'                                "@type"
      , :url || '/' || uuid                   "url"
      , t.uuid                                "uuid"
@@ -130,16 +125,18 @@ registry.http.get('/todos/{todoUUID}{?action}')
       },
     },
   })
-  .handle(devExtension.handlePage('todo-detail'))
-  .handle('application/ld+json', async (ctx) => {
+  .handle(dev.html('todo-detail'))
+  .handle(dev.jsonld((ctx) => {
     const todo = getTodoStatement.get({
-      url: getContext.url(),
-      ctx: ctx.url,
+      url: ctx.url,
+      ctx: getContext.url(),
       todoUUID: ctx.payload.todoUUID,
     });
-  
-    ctx.body = JSON.stringify(todo);
-  });
+
+    console.log('TODO', todo);
+
+    return todo;
+  }));
 
 
 const insertTodoStatement = db.prepare<{

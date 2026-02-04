@@ -12,16 +12,15 @@ export const body: SSRView = (args) => {
   return [
     l('header'),
 
-    o.enter(location.toString(), { mainEntity: true }, o => [
-      o.select('oct:members', o => [
+    o.enter(location, { mainEntity: true }, o => [
+      o.select('oct:members', o => 
         m('.card',
           o.select('oct:title', o => m('.start', o.present())),
-          o.select('oct:url', o => m('.end', o.present({
+          o.select('@id', o => m('.end', o.present({
             attrs: { text: 'View todo' },
           }))),
         ),
-
-      ]),
+      ),
 
       o.present({ component: Debug }),
     ]),

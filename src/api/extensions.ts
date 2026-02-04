@@ -9,7 +9,7 @@ export const staticExtension = new StaticExtension({
   cache: memoryCache,
 });
 
-export const devExtension = new DevExtension({
+export const dev = new DevExtension({
   registry,
   vocab,
   aliases,

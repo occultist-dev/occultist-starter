@@ -6,6 +6,10 @@ import {PresentURL} from '#type-handlers/PresentURL.ts';
 
 export const typeHandlers = [
   makeTypeHandler({
+    type: '@id',
+    present: PresentURL,
+  }),
+  makeTypeHandler({
     type: 'oct:title',
     present: PresentText,
     edit: EditText,
@@ -14,10 +18,6 @@ export const typeHandlers = [
     type: 'oct:description',
     present: PresentText,
     edit: EditTextAsTextArea,
-  }),
-  makeTypeHandler({
-    type: 'oct:url',
-    present: PresentURL,
   }),
 ] as const;
 
