@@ -8,7 +8,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.12.2",
   "scripts": {
-    "dev": "node --watch src/api/api.ts",
+    "dev": "node --watch-path=src --watch-path=node_modules src/api/api.ts",
     "deno": "deno --allow-all --watch src/api/api.ts",
     "deno:native": "deno --allow-all --watch src/api/deno.ts",
     "bun": "bun --watch src/api/api.ts",
@@ -32,7 +32,6 @@
     "mithril": "^2.3.8",
     "mithril-node-render": "^3.0.2",
     "terser": "^5.46.0",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
     "uri-templates": "^0.2.0",
     "zimmerframe": "^1.1.4"

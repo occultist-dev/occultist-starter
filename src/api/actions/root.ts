@@ -33,12 +33,12 @@ registry.http.get('/')
   .handle('text/longform', async (ctx) => {
     ctx.body = await readFile(join(appDir, 'pages/home.lf'));
   })
-  .handle(dev.jsonld({
+  .handle(dev.jsonld(() => ({
     name: 'Example API',
     description: 'This is a linked data API.',
     todoListing: todoListing.url(),
     actions: rootScope.url(),
-  }))
+  })))
   .handle(['application/ld+json', 'application/json'], (ctx) => {
     ctx.body = JSON.stringify({
       '@context': getContext.url(),

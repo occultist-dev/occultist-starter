@@ -8,14 +8,20 @@ import {dev} from "../extensions.ts";
 import {join} from "node:path";
 import {appDir} from "../../config.ts";
 import {readFile} from "node:fs/promises";
-import {BadRequestError} from "@occultist/occultist";
-import {memoryCache} from "../cache.ts";
+import {BadRequestError, InternalServerError} from "@occultist/occultist";
+import type {JSONValue} from "@occultist/mini-jsonld";
 
 
 type PotentialAction = {
   '@id': string;
   '@type': string;
 };
+
+type TodoStatus =
+  | 'planned'
+  | 'in-progress'
+  | 'complete'
+;
 
 type Todo = {
   '@context'?: string;
@@ -24,35 +30,74 @@ type Todo = {
   uuid: string;
   createTime: string;
   updateTime: string;
+  status: TodoStatus;
   title: string;
   description?: string;
-  potentialAction?: PotentialAction[];
+  potentialAction?: PotentialAction[] | null;
 };
+
+const todoStatuses = new Set<TodoStatus>(['planned', 'in-progress', 'complete']);
+
+function isTodoStatus(value: JSONValue): value is TodoStatus {
+  return todoStatuses.has(value as string);
+}
 
 const listTodosStatement = db.prepare<{
   url: string;
+  todoStatus?: TodoStatus;
+  search?: string;
+  status?: TodoStatus;
   limit: number;
   offset: number;
+  potentialAction?: JSONValue;
 }, Todo>(`
   select
-      :url || '/' || t.uuid                 "@id"
-    , 'Todo'                                "@type"
-    , :url || '/' || uuid                   "url"
-    , t.uuid                                "uuid"
-    , datetime(t.create_time, 'unixepoch')  "createTime"
-    , datetime(t.update_time, 'unixepoch')  "updateTime"
-    , t.title                               "title"
-    , t.description                         "description"
+      :url || '/' || t.uuid                     "@id"
+    , 'Todo'                                    "@type"
+    , t.uuid                                    "uuid"
+    , datetime(t.create_time, 'unixepoch')      "createTime"
+    , datetime(t.update_time, 'unixepoch')      "updateTime"
+    , datetime(t.complete_time, 'unixepoch')    "completeTime"
+    , t.status                                  "todoStatus"
+    , t.title                                   "title"
+    , t.description                             "description"
   from todos t
+  where (
+    -- I'm being lazy. Handling conditionals like this is
+    -- probably not a great thing to copy.
+       :search is null
+    or instr(t.title, :search)
+    or instr(t.description, :search)
+  ) and (
+      :todoStatus is null
+    or t.status = :todoStatus
+  )
+  order by
+      t.create_time desc
   limit :limit
   offset :offset
 `);
 
-export const todoListing = registry.http.get('/todos{?page,pageSize}')
+export const todoListing = rootScope.http.get('/todos{?todoStatus,search,page,pageSize}', {
+  name: 'list-todos',
+})
   .public()
   .define({
     typeDef: typeDefs.ListTodosAction,
     spec: {
+      todoStatus: {
+        typeDef: typeDefs.todoStatus,
+        dataType: 'string',
+        valueName: 'todoStatus',
+        valueRequired: false,
+        validator: isTodoStatus,
+      },
+      search: {
+        typeDef: typeDefs.search,
+        dataType: 'string',
+        valueMinLength: 3,
+        valueName: 'search',
+      },
       page: {
         typeDef: typeDefs.page,
         dataType: 'number',
@@ -79,14 +124,22 @@ export const todoListing = registry.http.get('/todos{?page,pageSize}')
   .handle('text/longform', async (ctx) => {
     ctx.body =  await readFile(join(appDir, 'pages/todo-listing.lf'));
   })
-  .handle(dev.jsonld(ctx => ({
-    '@context': getContext.url(),
-    members: listTodosStatement .all({
+  .handle(dev.jsonld(ctx => {
+    return {
+      '@context': getContext.url(),
+      members: listTodosStatement.all({
         url: ctx.url,
+        todoStatus: ctx.payload.todoStatus,
+        search: ctx.payload.search,
         limit: ctx.payload.limit ?? 10,
         offset: ctx.payload.offset ?? 0,
-      });
-  })));
+      }).map(todo => {
+        todo.potentialAction = setTodoStatusAction.jsonldPartial();
+
+        return todo;
+      }),
+    };
+  }));
 
  const getTodoStatement = db.prepare<{
    ctx: string;
@@ -95,7 +148,6 @@ export const todoListing = registry.http.get('/todos{?page,pageSize}')
  }, Todo>(`
    select
        :ctx                                  "@context"
-     , :url                                  "@id"
      , 'Todo'                                "@type"
      , :url || '/' || uuid                   "url"
      , t.uuid                                "uuid"
@@ -278,4 +330,56 @@ rootScope.http.post('/todos/:todoUUID')
   .handle('application/ld+json', () => {
 
   });
+
+
+const setTodoStatusStatement = db.prepare<{
+  todoUUID: string;
+  todoStatus: TodoStatus;
+}>(`
+update todos set
+  status = :todoStatus
+where uuid = :todoUUID
+`)
+
+const setTodoStatusAction = rootScope.http.put('/todos/:todoUUID/todo-status', { name: 'set-todo-status' })
+  .public()
+  .define({
+    typeDef: typeDefs.SetTodoStatusAction,
+    spec: {
+      todoUUID: {
+        typeDef: typeDefs.todoUUID,
+        dataType: 'string',
+        valueRequired: true,
+        valueMinLength: 36,
+        valueMaxLength: 36,
+      },
+      todoStatus: {
+        typeDef: typeDefs.todoStatus,
+        dataType: 'string',
+        valueRequired: true,
+        validator: isTodoStatus,
+      },
+    },
+  })
+  .use((ctx) => {
+    const res = setTodoStatusStatement.run({
+      todoUUID: ctx.payload.todoUUID,
+      todoStatus: ctx.payload.todoStatus,
+    });
+
+    if (res.changes === 0) {
+      throw new InternalServerError(`Failed to update todo`);
+    }
+  })
+  .handle('text/html', (ctx) => {
+    ctx.status = 302;
+    ctx.headers.set('location', todoListing.url());
+  })
+  .handle(['application/ld+json', 'application/json'], (ctx) => {
+    
+  })
+
+
+
+
 

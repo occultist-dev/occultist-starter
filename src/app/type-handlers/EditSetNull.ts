@@ -1,6 +1,5 @@
 import m from 'mithril';
-import { EditComponent } from '@octiron/octiron';
-import { Icon } from '../components/Icon.ts';
+import type {EditComponent} from '@octiron/octiron';
 
 
 export type EditSetNullAttrs = {
@@ -15,6 +14,6 @@ export const EditSetNull: EditComponent<EditSetNullAttrs> = {
       'aria-label': targetName != null ? `Clear ${targetName}` : `Clear value`,
       disabled: value == null || spec?.readonly,
       onclick: () => onchange(null),
-    }, m(Icon, { icon: 'close-small' }));
+    }, 'Clear');
   },
 };

@@ -16,14 +16,17 @@ export const typeDefs = makeTypeDefs([
   makeTypeDef({ term: 'url', schema: schemas.oct }),
   makeTypeDef({ term: 'page', schema: schemas.oct }),
   makeTypeDef({ term: 'pageSize', schema: schemas.oct }),
+  makeTypeDef({ term: 'position', schema: schemas.oct }),
   makeTypeDef({ term: 'members', schema: schemas.oct }),
   makeTypeDef({ term: 'actions', schema: schemas.oct, isIRI: true }),
   makeTypeDef({ term: 'potentialAction', schema: schemas.oct, isIRI: true }),
   makeTypeDef({ term: 'todoListing', schema: schemas.app, isIRI: true }),
+  makeTypeDef({ term: 'todoStatus', schema: schemas.app }),
   makeTypeDef({ term: 'GetTodosAction', schema: schemas.app }),
   makeTypeDef({ term: 'ListTodosAction', schema: schemas.app }),
   makeTypeDef({ term: 'CreateTodosAction', schema: schemas.app }),
   makeTypeDef({ term: 'UpdateTodosAction', schema: schemas.app }),
   makeTypeDef({ term: 'DeleteTodosAction', schema: schemas.app }),
+  makeTypeDef({ term: 'SetTodoStatusAction', schema: schemas.app }),
 ]);
 

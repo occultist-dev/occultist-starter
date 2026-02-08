@@ -6,7 +6,7 @@ export const EditBoolean: AnyComponent<boolean> = {
   view: ({ attrs }) => {
     if (attrs.renderType === 'present') {
       return m('input', {
-        type: 'radio',
+        type: 'checkbox',
         readonly: true,
         disabled: true,
         checked: attrs.value || false,
@@ -14,7 +14,7 @@ export const EditBoolean: AnyComponent<boolean> = {
     }
     
     return m('input', {
-      type: 'radio',
+      type: 'checkbox',
       checked: attrs.value,
       value: attrs.value,
       oninput: (evt: InputEvent) => attrs.onChange((evt?.target as HTMLInputElement)?.checked),

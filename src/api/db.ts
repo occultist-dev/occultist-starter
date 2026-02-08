@@ -22,8 +22,10 @@ const statements = [
       , uuid text not null
       , create_time int not null default (unixepoch())
       , update_time int
+      , complete_time int
       , title text not null
       , description text
+      , status text not null default 'planned'
     )
   `),
 ];
@@ -31,7 +33,6 @@ const statements = [
   for (let i = 0, length = statements.length; i < length; i++) {
     statements[i].run();
   }
-
 //db.prepare(`
 //  insert into todos (
 //      uuid
