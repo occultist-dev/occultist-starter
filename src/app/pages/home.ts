@@ -6,7 +6,7 @@ import m from 'mithril';
 export const head = renderLongform('head');
 export const footer = renderLongform('footer');
 
-export const body: SSRView = (args) => {
+export const main: SSRView = (args) => {
   const o = args.o;
   const l = renderLongform(args);
 

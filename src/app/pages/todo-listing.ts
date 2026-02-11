@@ -8,7 +8,7 @@ import m from 'mithril';
 
 export const head = renderLongform('head');
 
-export const body: SSRView = (args) => {
+export const main: SSRView = (args) => {
   const { o, location } = args;
   const l = renderLongform(args);
 

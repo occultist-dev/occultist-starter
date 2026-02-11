@@ -5,6 +5,7 @@ import {type AddressInfo} from 'node:net';
 
 import './actions/root.ts';
 import './actions/todos.ts';
+import './actions/components.ts';
 
 
 const server = createServer();

@@ -1,8 +1,26 @@
 
-
 @doctype:: html
 html[lang=en]::
   @mount:: head
   head::
-  @mount:: body
+
   body::
+    header::
+      @mount:: hgroup
+      hgroup::
+
+      @mount:: nav
+      nav::
+
+      button.button::
+        [command=show-modal]
+        [commandfor=site-search]
+        Search
+
+      @mount:: search
+      dialog#site-search.dialog::
+    span::
+        
+    @mount:: main
+    main::
+

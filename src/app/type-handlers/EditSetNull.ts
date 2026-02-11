@@ -14,6 +14,6 @@ export const EditSetNull: EditComponent<EditSetNullAttrs> = {
       'aria-label': targetName != null ? `Clear ${targetName}` : `Clear value`,
       disabled: value == null || spec?.readonly,
       onclick: () => onchange(null),
-    }, 'Clear');
+    }, 'Close');
   },
 };

@@ -1,0 +1,22 @@
+
+#dialog-header
+div.dialog-header::
+  h2.start:: Full site search
+
+  div.end::
+    button.button::
+      [command=close]
+      [commandfor=site-search]
+      Close
+
+#view-todo "
+  View todo
+  
+#cancel-button
+button.button::
+  [command=close]
+  [commandfor=site-search]
+  Cancel
+
+#search-text "
+  Search

@@ -15,6 +15,7 @@ export const srcDir = resolve(projectDir, 'src');
 export const apiDir = resolve(srcDir, 'api');
 export const actionsDir = resolve(apiDir, 'actions');
 export const appDir = resolve(srcDir, 'app');
+export const componentsDir = resolve(appDir, 'components');
 
 const config = JSON.parse(await readFile(join(projectDir, 'occultist.config.json'), 'utf-8')) as Config;
 

@@ -1,6 +1,6 @@
 import type {EditComponent, JSONValue} from '@octiron/octiron';
 import m from 'mithril';
-import {EditSetNull} from './EditSetNull.ts';
+import { EditSetNull } from './EditSetNull.ts';
 
 
 export type AnyFormGroupAttrs = {

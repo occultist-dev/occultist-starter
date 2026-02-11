@@ -6,6 +6,7 @@ import {renderLongform} from '#utils/renderLongform.ts';
 export const head: SSRView = ({ o, location }) => {
   return o.enter(location, o => [
     m('title', o.get<string>('oct:title')),
+
     o.select('oct:description', o => m('meta', {
       name: 'description',
       content: o.value,
