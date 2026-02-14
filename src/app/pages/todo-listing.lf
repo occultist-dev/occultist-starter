@@ -4,16 +4,40 @@
   meta::
     [name=description]
     [content=Todos]
-]
 
-#header
-header::
-  hgroup::
-    h1:: Todos
-  nav::
-    a[href=/]:: Home
-    a[href=/todos][aria-current=page]:: Todos
+#hgroup [
+  h1:: Todos
 
-#footer
-div::
-  Todos footer
+#add-todo-dialog-header
+div.dialog-header::
+  div.start::
+    h2:: Add todo
+  div.end::
+    button.button::
+      [type=button]
+      [command=close]
+      [commandfor=add-todo-dialog]
+      Close
+
+#cancel-adding-todo-button
+button.button::
+  [type=button]
+  [command=close]
+  [commandfor=add-todo-dialog]
+  Cancel
+
+#todo-listing "
+  Todo listing
+
+#search "
+  Search
+
+#title "
+  Title
+
+#description "
+  Description
+
+#add-todo "
+  Add todo
+

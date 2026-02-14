@@ -3,9 +3,6 @@ import type {SSRView} from '@occultist/extensions';
 import {OctironForm, OctironSubmitButton} from '@octiron/octiron';
 import m from 'mithril';
 
-export const head = renderLongform('head');
-export const footer = renderLongform('footer');
-
 export const main: SSRView = (args) => {
   const o = args.o;
   const l = renderLongform(args);

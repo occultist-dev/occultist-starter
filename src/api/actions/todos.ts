@@ -8,7 +8,7 @@ import {dev} from "../extensions.ts";
 import {join} from "node:path";
 import {appDir} from "../../config.ts";
 import {readFile} from "node:fs/promises";
-import {BadRequestError, InternalServerError} from "@occultist/occultist";
+import {BadRequestError, InternalServerError, NotFoundError} from "@occultist/occultist";
 import type {JSONValue} from "@occultist/mini-jsonld";
 
 

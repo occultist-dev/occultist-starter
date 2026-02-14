@@ -8,11 +8,19 @@ export type AnyFormGroupAttrs = {
   headerEnd?: m.Children;
   footerStart?: m.Children;
   footerEnd?: m.Children;
+  clearable?: boolean;
 } & m.Attributes;
 
 export const EditFormGroup: EditComponent<JSONValue, AnyFormGroupAttrs> = () => {
   return {
-    view: ({ attrs: { o, attrs: { label, headerEnd, footerStart, footerEnd, ...componentAttrs }, ...attrs} }) => {
+    view: ({ attrs: { o, attrs: {
+      label,
+      headerEnd,
+      footerStart,
+      footerEnd,
+      clearable,
+      ...componentAttrs
+    }, ...attrs} }) => {
       return m('.form-group', componentAttrs, [
         m('.form-group__header', {
           for: o.id,
@@ -22,7 +30,7 @@ export const EditFormGroup: EditComponent<JSONValue, AnyFormGroupAttrs> = () => 
         ]),
         m('.form-group__input', [
           o.default(),
-          !attrs.spec.required
+          clearable ?? !attrs.spec.required
             ? o.edit({
               component: EditSetNull,
               attrs: {

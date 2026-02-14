@@ -9,7 +9,8 @@ export type EditTextAsTextAreaAttrs = {
 export const EditTextAsTextArea: AnyComponent<string, EditTextAsTextAreaAttrs> = () => {
   return {
     view: ({ attrs }) => {
-      if (attrs.renderType === 'present') {
+      if (attrs.renderType === 'present' ||
+          attrs.o.octironType !== 'action-selection') {
         return m("textarea", {
           id: attrs.o.id,
           ...attrs.attrs,

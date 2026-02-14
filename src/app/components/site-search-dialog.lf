@@ -1,10 +1,15 @@
 
+#hgroup
+h1:: Occultist.dev todos app
+
+
 #dialog-header
 div.dialog-header::
   h2.start:: Full site search
 
   div.end::
     button.button::
+      [type=button]
       [command=close]
       [commandfor=site-search]
       Close
@@ -14,6 +19,7 @@ div.dialog-header::
   
 #cancel-button
 button.button::
+  [type=button]
   [command=close]
   [commandfor=site-search]
   Cancel

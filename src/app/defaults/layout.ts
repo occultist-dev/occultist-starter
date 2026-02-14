@@ -6,9 +6,45 @@ import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
 import {PresentURL} from '#type-handlers/PresentURL.ts';
 
 
+export const head = renderLongform('head');
+
 export const hgroup = renderLongform('hgroup');
 
-export const nav = renderLongform('nav');
+export const body: SSRView = (args) => {
+  const l = renderLongform(args);
+
+  return [
+    m('header.header',
+      m('hgroup.hgroup', args.page.hgroup?.() ?? hgroup(args)),
+      m('nav.nav', args.page.nav?.() ?? nav(args)),
+      m('.control-group',
+        m('button.button.dashed', {
+          type: 'button',
+          command: 'show-modal',
+          commandfor: 'site-search',
+        }, l.text('search')),
+      ),
+    ),
+    m('main.main', args.page.main?.()),
+    m('footer.footer', args.page.footer?.() ?? footer(args)),
+    m('dialog#site-search', search(args)),
+  ];
+}
+
+export const nav: SSRView = (args) => {
+  return m('menu.menu',
+    m('li',
+      m('a.button.dashed[href=/]', {
+        'aria-current': args.location.pathname === '/' ? 'page' : null,
+      }, 'Home'),
+    ),
+    m('li', 
+      m('a.button.dashed[href=/todos]', {
+        'aria-current': args.location.pathname === '/todos' ? 'page' : null,
+      }, 'Todos'),
+    ),
+  );
+}
 
 export const search: SSRView = (args) => {
   const o = args.o;
