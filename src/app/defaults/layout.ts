@@ -18,7 +18,7 @@ export const body: SSRView = (args) => {
       m('hgroup.hgroup', args.page.hgroup?.() ?? hgroup(args)),
       m('nav.nav', args.page.nav?.() ?? nav(args)),
       m('.control-group',
-        m('button.button.dashed', {
+        m('button.button.small', {
           type: 'button',
           command: 'show-modal',
           commandfor: 'site-search',
@@ -34,12 +34,12 @@ export const body: SSRView = (args) => {
 export const nav: SSRView = (args) => {
   return m('menu.menu',
     m('li',
-      m('a.button.dashed[href=/]', {
+      m('a.button.small.dashed[href=/]', {
         'aria-current': args.location.pathname === '/' ? 'page' : null,
       }, 'Home'),
     ),
     m('li', 
-      m('a.button.dashed[href=/todos]', {
+      m('a.button.small.dashed[href=/todos]', {
         'aria-current': args.location.pathname === '/todos' ? 'page' : null,
       }, 'Todos'),
     ),
@@ -52,6 +52,8 @@ export const search: SSRView = (args) => {
     o,
     location: new URL('./components/site-search', o.store.rootIRI),
   });
+  
+  return null;
 
   return o.perform('oct:actions ListTodosAction', {
     submitOnChange: true,

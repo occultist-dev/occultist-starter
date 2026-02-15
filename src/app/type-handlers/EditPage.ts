@@ -10,9 +10,9 @@ export const EditPage: EditComponent<number, EditPageAttrs> = {
   view: ({ attrs }) => {
     const value = (attrs.value ??= 1);
 
-    return m('.page-controls', [
+    return m('.control-group', [
       m(
-        'button',
+        'button.button',
         {
           type: 'submit',
           disabled: attrs.spec.readonly || value === 1,
@@ -29,7 +29,7 @@ export const EditPage: EditComponent<number, EditPageAttrs> = {
         'Prev'
       ),
       m(
-        'button',
+        'button.button',
         {
           type: 'submit',
           disabled: attrs.spec.readonly,

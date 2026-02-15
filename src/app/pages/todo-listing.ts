@@ -1,4 +1,6 @@
+import {Debug} from '#type-handlers/Debug.ts';
 import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
+import {EditPage} from '#type-handlers/EditPage.ts';
 import {renderLongform} from '#utils/renderLongform.ts';
 import type {SSRView} from '@occultist/extensions';
 import {OctironForm, OctironSubmitButton} from '@octiron/octiron';
@@ -15,33 +17,32 @@ export const main: SSRView = (args) => {
     initialValue: {
       'oct:search': location.searchParams.get('search'),
     },
-  }, a => [
-    // actions bar
-    m('.block.action-row',
-      a.select('oct:search', o =>
-        m('.start',
-          o.edit({
-            attrs: { label: l.text('search') },
-            component: EditFormGroup,
-          }),
+  }, x => [
+    m(OctironForm, { o: x },
+      m('.action-bar',
+        x.select('oct:search', o =>
+          m('.start',
+            o.edit({
+              attrs: { label: l.text('search') },
+              //component: EditFormGroup,
+            }),
+          ),
+        ),
+        
+        m('.end',
+          m('button.button', {
+            type: 'button',
+            command: 'show-modal',
+            commandFor: 'add-todo-dialog',
+          }, l.text('add-todo')),
         ),
       ),
-      m('.end',
-        m('button.button', {
-          type: 'button',
-          command: 'show-modal',
-          commandFor: 'add-todo-dialog',
-        }, l.text('add-todo')),
-      ),
-    ),
 
-    m('.block.card-list', 
-      // todo cards
-      a.success('oct:members', o =>
-        m('article.card',
-          m('header.card-header',
-            m('.start',
-              o.perform('oct:potentialAction', {
+      m('.narrow.list', 
+        x.success('oct:members', o =>
+          m('article.thin.inline.card',
+            m('header.start',
+              o.perform('oct:actions[SetTodoStatusAction]', {
                 fallback: o.select('todoStatus'),
                 initialValue: {
                   todoStatus: o.get('todoStatus'),
@@ -51,25 +52,39 @@ export const main: SSRView = (args) => {
                   o.select('todoStatus'),
                 ),
               ),
-            ),
-            m('h2.end', o.get<string>('oct:title')),
-          ),
 
-          m('.card-body',
-            o.select('oct:description', o =>
-              m('p', o.present()),
+              m('h2', o.get<string>('oct:title')),
             ),
+
+            o.select('@id', o => 
+              m('.end',
+                o.present({
+                  attrs: {
+                    class: 'small anchor button',
+                    text: l.text('view-todo'),
+                  },
+                }),
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      x.select('oct:page', o =>
+        m('.control-bar',
+          m('.end',
+            o.default({ component: EditPage }),
           ),
         ),
       ),
     ),
 
-    a.root(o =>
+    x.root(o =>
       o.perform('oct:actions CreateTodosAction', {
         onSubmitSuccess: o => {
           const dialog = document.getElementById('add-todo-dialog') as HTMLDialogElement;
 
-          a.submit().finally(() => {
+          x.submit().finally(() => {
             o.update({}, { submitOnChange: false });
             dialog.close()
           });

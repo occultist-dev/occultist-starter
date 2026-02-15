@@ -29,6 +29,9 @@ button.button::
 #todo-listing "
   Todo listing
 
+#view-todo "
+  View todo
+
 #search "
   Search
 

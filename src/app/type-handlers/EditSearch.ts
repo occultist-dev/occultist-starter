@@ -9,7 +9,7 @@ export type EditSearchAttrs = {
 export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
   view: ({ attrs: { o, attrs: { form, searchText, ...attrs }, ...mode }}) => {
     if (mode.renderType === 'present') {
-      return m('.inline-layout',
+      return m('.control-group.tight',
         m('input', {
           placeholder: attrs.placeholder ?? 'Search',
           ...attrs,
@@ -25,8 +25,8 @@ export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
       );
     }
 
-    return m('.inline-layout', [
-      m('input.search-input', {
+    return m('.control-group.tight', [
+      m('input.search.rounded', {
         placeholder: attrs.placeholder ?? 'Search',
         ...attrs.attrs,
         type: 'search',

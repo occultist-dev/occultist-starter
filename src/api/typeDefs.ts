@@ -14,6 +14,7 @@ export const typeDefs = makeTypeDefs([
   makeTypeDef({ term: 'result', schema: schemas.oct }),
   makeTypeDef({ term: 'description', schema: schemas.oct }),
   makeTypeDef({ term: 'url', schema: schemas.oct }),
+  makeTypeDef({ term: 'search', schema: schemas.oct }),
   makeTypeDef({ term: 'page', schema: schemas.oct }),
   makeTypeDef({ term: 'pageSize', schema: schemas.oct }),
   makeTypeDef({ term: 'position', schema: schemas.oct }),

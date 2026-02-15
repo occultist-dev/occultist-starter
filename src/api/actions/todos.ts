@@ -66,6 +66,7 @@ const listTodosStatement = db.prepare<{
     -- I'm being lazy. Handling conditionals like this is
     -- probably not a great thing to copy.
        :search is null
+    or :search = ''
     or instr(t.title, :search)
     or instr(t.description, :search)
   ) and (
@@ -95,7 +96,6 @@ export const todoListing = rootScope.http.get('/todos{?todoStatus,search,page,pa
       search: {
         typeDef: typeDefs.search,
         dataType: 'string',
-        valueMinLength: 3,
         valueName: 'search',
       },
       page: {
@@ -184,8 +184,6 @@ registry.http.get('/todos/{todoUUID}{?action}')
       ctx: getContext.url(),
       todoUUID: ctx.payload.todoUUID,
     });
-
-    console.log('TODO', todo);
 
     return todo;
   }));

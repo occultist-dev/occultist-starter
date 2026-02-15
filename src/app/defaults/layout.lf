@@ -5,5 +5,5 @@ html[lang=en]::
   head::
 
   @mount:: body
-  body.layout.narrow-column::
+  body.narrow-column.layout::
 
