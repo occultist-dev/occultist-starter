@@ -24,9 +24,12 @@ export const EditTodoStatus: AnyComponent<TodoStatus> = {
       value: attrs.value,
       disabled: attrs.spec.readonly,
       multiple: attrs.spec.multiple,
+      oninput: (evt) => {
+        console.log('CHANGED', evt);
+        attrs.onChange(evt.target.value);
+      },
       onselect: (evt) => {
         console.log('EVT', evt);
-        attrs.onChange(evt.target.value);
       },
     },
       m('option[value=planned]', 'Planned'),

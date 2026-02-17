@@ -1,6 +1,5 @@
 import {Debug} from '#type-handlers/Debug.ts';
 import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
-import {EditPage} from '#type-handlers/EditPage.ts';
 import {renderLongform} from '#utils/renderLongform.ts';
 import type {SSRView} from '@occultist/extensions';
 import {OctironForm, OctironSubmitButton} from '@octiron/octiron';
@@ -11,6 +10,7 @@ export const main: SSRView = (args) => {
   const l = renderLongform(args);
 
   return o.perform('oct:actions ListTodosAction', {
+    defer: true,
     mainEntity: true,
     submitOnInit: true,
     submitOnChange: true,
@@ -22,10 +22,7 @@ export const main: SSRView = (args) => {
       m('.action-bar',
         x.select('oct:search', o =>
           m('.start',
-            o.edit({
-              attrs: { label: l.text('search') },
-              //component: EditFormGroup,
-            }),
+            o.edit({ attrs: { label: l.text('search') } }),
           ),
         ),
         
@@ -42,9 +39,12 @@ export const main: SSRView = (args) => {
         x.success('oct:members', o =>
           m('article.thin.inline.card',
             m('header.start',
-              o.perform('oct:actions[SetTodoStatusAction]', {
+              o.perform('oct:actions SetTodoStatusAction', {
+                submitOnChange: true,
+                onSubmitSuccess: () => x.submit(),
                 fallback: o.select('todoStatus'),
                 initialValue: {
+                  todoUUID: o.get('oct:uuid'),
                   todoStatus: o.get('todoStatus'),
                 },
               }, o =>
@@ -72,9 +72,7 @@ export const main: SSRView = (args) => {
 
       x.select('oct:page', o =>
         m('.control-bar',
-          m('.end',
-            o.default({ component: EditPage }),
-          ),
+          m('.end', o.edit()),
         ),
       ),
     ),

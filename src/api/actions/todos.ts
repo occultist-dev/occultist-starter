@@ -9,7 +9,7 @@ import {join} from "node:path";
 import {appDir} from "../../config.ts";
 import {readFile} from "node:fs/promises";
 import {BadRequestError, InternalServerError, NotFoundError} from "@occultist/occultist";
-import type {JSONValue} from "@occultist/mini-jsonld";
+import type {JSONValue, JSONObject} from "@occultist/mini-jsonld";
 
 
 type PotentialAction = {
@@ -33,7 +33,7 @@ type Todo = {
   status: TodoStatus;
   title: string;
   description?: string;
-  potentialAction?: PotentialAction[] | null;
+  actions?: JSONObject;
 };
 
 const todoStatuses = new Set<TodoStatus>(['planned', 'in-progress', 'complete']);
@@ -49,7 +49,6 @@ const listTodosStatement = db.prepare<{
   status?: TodoStatus;
   limit: number;
   offset: number;
-  potentialAction?: JSONValue;
 }, Todo>(`
   select
       :url || '/' || t.uuid                     "@id"
@@ -74,7 +73,13 @@ const listTodosStatement = db.prepare<{
     or t.status = :todoStatus
   )
   order by
-      t.create_time desc
+      case
+        when t.status = 'in-progress' THEN 0
+        when t.status = 'planned' THEN 1
+        else 2
+      end
+    , t.complete_time desc
+    , t.create_time desc
   limit :limit
   offset :offset
 `);
@@ -134,7 +139,9 @@ export const todoListing = rootScope.http.get('/todos{?todoStatus,search,page,pa
         limit: ctx.payload.limit ?? 10,
         offset: ctx.payload.offset ?? 0,
       }).map(todo => {
-        todo.potentialAction = setTodoStatusAction.jsonldPartial();
+        todo.actions = {
+          [setTodoStatusAction.type]: setTodoStatusAction.jsonldPartial(),
+        }
 
         return todo;
       }),
@@ -184,6 +191,10 @@ registry.http.get('/todos/{todoUUID}{?action}')
       ctx: getContext.url(),
       todoUUID: ctx.payload.todoUUID,
     });
+
+    todo.actions = {
+      [setTodoStatusAction.term]: setTodoStatusAction.jsonldPartial(),
+    };
 
     return todo;
   }));
@@ -255,6 +266,10 @@ rootScope.http.post('/todos', { name: 'create-todo' })
       title: ctx.payload.title,
       description: ctx.payload.description,
     });
+
+    todo.actions = {
+      [setTodoStatusAction.type]: setTodoStatusAction.jsonldPartial(),
+    };
 
     ctx.status = 201;
     ctx.body = JSON.stringify({
@@ -339,13 +354,14 @@ update todos set
 where uuid = :todoUUID
 `)
 
-const setTodoStatusAction = rootScope.http.put('/todos/:todoUUID/todo-status', { name: 'set-todo-status' })
+const setTodoStatusAction = rootScope.http.put('/todos/{todoUUID}/todo-status', { name: 'set-todo-status' })
   .public()
   .define({
     typeDef: typeDefs.SetTodoStatusAction,
     spec: {
       todoUUID: {
         typeDef: typeDefs.todoUUID,
+        valueName: 'todoUUID',
         dataType: 'string',
         valueRequired: true,
         valueMinLength: 36,
@@ -359,7 +375,7 @@ const setTodoStatusAction = rootScope.http.put('/todos/:todoUUID/todo-status', {
       },
     },
   })
-  .use((ctx) => {
+  .use((ctx, next) => {
     const res = setTodoStatusStatement.run({
       todoUUID: ctx.payload.todoUUID,
       todoStatus: ctx.payload.todoStatus,
@@ -368,14 +384,28 @@ const setTodoStatusAction = rootScope.http.put('/todos/:todoUUID/todo-status', {
     if (res.changes === 0) {
       throw new InternalServerError(`Failed to update todo`);
     }
+    
+    next();
   })
   .handle('text/html', (ctx) => {
     ctx.status = 302;
     ctx.headers.set('location', todoListing.url());
   })
-  .handle(['application/ld+json', 'application/json'], (ctx) => {
-    
-  })
+  .handle(dev.jsonld((ctx) => {
+    const todo = getTodoStatement.get({
+      url: new URL('..', ctx.url).toString(),
+      ctx: getContext.url(),
+      todoUUID: ctx.payload.todoUUID,
+    });
+
+    todo.actions = {
+      [setTodoStatusAction.term]: setTodoStatusAction.jsonldPartial(),
+    };
+
+    console.log('TODO', todo);
+
+    return todo;
+  }));
 
 
 

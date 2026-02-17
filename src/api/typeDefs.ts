@@ -7,6 +7,8 @@ export const schemas = {
 } as const;
 
 export const typeDefs = makeTypeDefs([
+  makeTypeDef({ term: 'uuid', schema: schemas.oct }),
+  makeTypeDef({ term: 'identifier', schema: schemas.oct }),
   makeTypeDef({ term: 'name', schema: schemas.oct }),
   makeTypeDef({ term: 'title', schema: schemas.oct }),
   makeTypeDef({ term: 'message', schema: schemas.oct }),
@@ -22,6 +24,7 @@ export const typeDefs = makeTypeDefs([
   makeTypeDef({ term: 'actions', schema: schemas.oct, isIRI: true }),
   makeTypeDef({ term: 'potentialAction', schema: schemas.oct, isIRI: true }),
   makeTypeDef({ term: 'todoListing', schema: schemas.app, isIRI: true }),
+  makeTypeDef({ term: 'todoUUID', schema: schemas.app }),
   makeTypeDef({ term: 'todoStatus', schema: schemas.app }),
   makeTypeDef({ term: 'GetTodosAction', schema: schemas.app }),
   makeTypeDef({ term: 'ListTodosAction', schema: schemas.app }),

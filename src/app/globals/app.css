@@ -339,7 +339,8 @@
     font-weight: 600;
   }
 
-  input {
+  .input {
+    anchor-name: --input;
     height: 2rem;
     border-radius: 0;
     border: solid 1px black;
@@ -353,7 +354,22 @@
 
     &.rounded {
       border-radius: .25rem;
+    } 
+
+    &[type=search]::-webkit-search-cancel-button {
+      display: none;
+      -webkit-appearance: none;
     }
+  }
+
+  .input-controls {
+    display: flex;
+    align-items: baseline;
+    position: absolute;
+    position-anchor: --input;
+    right: anchor(right);
+    margin-top: .1rem;
+    margin-right: .1rem;
   }
 
   textarea {
@@ -419,7 +435,7 @@
     align-items: baseline;
     gap: .5rem;
     padding: .25rem;
-    border: solid 1px light-dark(var(--border-color), var(--border-color-dark));
+    /*border: solid 1px light-dark(var(--border-color), var(--border-color-dark));*/
     border-radius: .25rem;
 
     &.vertical {

@@ -26,7 +26,7 @@ export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
     }
 
     return m('.control-group.tight', [
-      m('input.search.rounded', {
+      m('input.input.rounded', {
         placeholder: attrs.placeholder ?? 'Search',
         ...attrs.attrs,
         type: 'search',
@@ -37,9 +37,22 @@ export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
           mode.onChange((evt.target as HTMLInputElement).value);
         },
       }),
+      !mode.spec.required && (
+        m('.input-controls',
+          m('button.small.minimal.button', {
+            onclick: (evt) => {
+              evt.preventDefault();
+              mode.onChange(null, { submit: true });
+            },
+          }, '🗙'),
+        )
+      ),
       m('button.button', {
-        type: 'submit',
         form: form,
+        onclick: (evt) => {
+          evt.preventDefault();
+          mode.onChange(attrs.value, { submit: true });
+        },
       }, searchText ?? 'Search'),
     ]);
   },
