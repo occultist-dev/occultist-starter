@@ -1,16 +1,24 @@
-import {Debug} from '#type-handlers/Debug.ts';
 import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
 import {renderLongform} from '#utils/renderLongform.ts';
 import type {SSRView} from '@occultist/extensions';
-import {OctironForm, OctironSubmitButton} from '@octiron/octiron';
+import {OctironForm, OctironSubmitButton, type Predicate} from '@octiron/octiron';
 import m from 'mithril';
+
+
+const isPopulated = (termOrType: string): Predicate => (o) => {
+  let value = o.get(termOrType);
+
+  if (value == null) return false;
+  if (Array.isArray(value) && value.length === 0) return false;
+
+  return true;
+}
 
 export const main: SSRView = (args) => {
   const { o, location } = args;
   const l = renderLongform(args);
 
   return o.perform('oct:actions ListTodosAction', {
-    defer: true,
     mainEntity: true,
     submitOnInit: true,
     submitOnChange: true,
@@ -22,7 +30,7 @@ export const main: SSRView = (args) => {
       m('.action-bar',
         x.select('oct:search', o =>
           m('.start',
-            o.edit({ attrs: { label: l.text('search') } }),
+            o.edit({ attrs: { placeholder: l.text('search') } }),
           ),
         ),
         
@@ -31,21 +39,34 @@ export const main: SSRView = (args) => {
             type: 'button',
             command: 'show-modal',
             commandFor: 'add-todo-dialog',
-          }, l.text('add-todo')),
+          }, l('add-todo')),
         ),
       ),
 
       m('.narrow.list', 
-        x.success('oct:members', o =>
-          m('article.thin.inline.card',
+        x.success(o => o.not(isPopulated('oct:members'),
+          m('.card', 'No results')
+        )),
+
+        x.success('oct:members', y =>
+          m('.thin.inline.card',
             m('header.start',
-              o.perform('oct:actions SetTodoStatusAction', {
+
+              y.perform('oct:actions SetTodoStatusAction', {
                 submitOnChange: true,
-                onSubmitSuccess: () => x.submit(),
-                fallback: o.select('todoStatus'),
+                readonlyFallback: true,
+                onSubmitSuccess: setTodoStatus => {
+                  x.submit().then(() => {
+                    setTodoStatus.update({
+                      todoUUID: y.get('oct:uuid'),
+                      todoStatus: y.get('todoStatus'),
+                    }, { submit: false });
+                  });
+                },
+                fallback: y.select('todoStatus'),
                 initialValue: {
-                  todoUUID: o.get('oct:uuid'),
-                  todoStatus: o.get('todoStatus'),
+                  todoUUID: y.get('oct:uuid'),
+                  todoStatus: y.get('todoStatus'),
                 },
               }, o =>
                 m(OctironForm, { o },
@@ -53,10 +74,10 @@ export const main: SSRView = (args) => {
                 ),
               ),
 
-              m('h2', o.get<string>('oct:title')),
+              m('h2', y.get<string>('oct:title')),
             ),
 
-            o.select('@id', o => 
+            y.select('@id', o => 
               m('.end',
                 o.present({
                   attrs: {
@@ -66,8 +87,10 @@ export const main: SSRView = (args) => {
                 }),
               ),
             ),
+            
           ),
         ),
+
       ),
 
       x.select('oct:page', o =>

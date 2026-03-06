@@ -79,7 +79,7 @@ const listTodosStatement = db.prepare<{
         else 2
       end
     , t.complete_time desc
-    , t.create_time desc
+    , t.update_time desc
   limit :limit
   offset :offset
 `);

@@ -25,7 +25,6 @@ export const EditTodoStatus: AnyComponent<TodoStatus> = {
       disabled: attrs.spec.readonly,
       multiple: attrs.spec.multiple,
       oninput: (evt) => {
-        console.log('CHANGED', evt);
         attrs.onChange(evt.target.value);
       },
       onselect: (evt) => {

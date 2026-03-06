@@ -25,6 +25,7 @@ export const dev = new DevExtension({
     scripts: {
       'uri-templates': resolve(appDir, 'vendor/uri-templates.js'),
       'mithril': resolve(appDir, 'vendor/mithril.js'),
+      '@octiron/octiron': resolve(nodeModulesDir, '@octiron/octiron/dist/octiron.js'),
     },
   },
   groups: [

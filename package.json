@@ -42,6 +42,7 @@
     "@types/deno": "^2.5.0",
     "@types/jsonld": "^1.5.15",
     "@types/mithril": "^2.2.7",
-    "@types/node": "^25.0.3"
+    "@types/node": "^25.0.3",
+    "prettier": "^3.8.1"
   }
 }

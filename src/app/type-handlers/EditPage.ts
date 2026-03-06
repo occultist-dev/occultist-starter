@@ -8,7 +8,7 @@ export type EditPageAttrs = {
 
 export const EditPage: EditComponent<number, EditPageAttrs> = {
   view: ({ attrs }) => {
-    const value = (attrs.value ??= 1);
+    const value = attrs.value ?? 1;
 
     return m('.control-group', [
       m(
@@ -19,11 +19,7 @@ export const EditPage: EditComponent<number, EditPageAttrs> = {
           value: value - 1,
           name: attrs.name,
           onclick: () => {
-            if (value === 2 || value === 1) {
-              attrs.onChange(null);
-            } else {
-              attrs.onChange(value - 1);
-            }
+            attrs.onChange(value - 1);
           },
         },
         'Prev'

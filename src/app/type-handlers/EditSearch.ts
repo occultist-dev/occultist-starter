@@ -7,12 +7,12 @@ export type EditSearchAttrs = {
 } & Attributes;
 
 export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
-  view: ({ attrs: { o, attrs: { form, searchText, ...attrs }, ...mode }}) => {
-    if (mode.renderType === 'present') {
+  view: ({ attrs: { o, attrs: { form, searchText, ...childAttrs }, ...attrs }}) => {
+    if (attrs.renderType === 'present') {
       return m('.control-group.tight',
         m('input', {
-          placeholder: attrs.placeholder ?? 'Search',
-          ...attrs,
+          placeholder: childAttrs.placeholder ?? 'Search',
+          ...childAttrs,
           id: null,
           name: null,
           value: null,
@@ -27,31 +27,31 @@ export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
 
     return m('.control-group.tight', [
       m('input.input.rounded', {
-        placeholder: attrs.placeholder ?? 'Search',
-        ...attrs.attrs,
+        placeholder: childAttrs.placeholder ?? 'Search',
+        ...childAttrs.attrs,
         type: 'search',
         id: o.id,
-        name: attrs.name,
+        name: childAttrs.name,
         value: attrs.value,
-        onchange: (evt: KeyboardEvent) => {
-          mode.onChange((evt.target as HTMLInputElement).value);
+        oninput: (evt: KeyboardEvent) => {
+          attrs.onChange((evt.target as HTMLInputElement).value);
         },
       }),
-      !mode.spec.required && (
+      !attrs.spec.required && (
         m('.input-controls',
           m('button.small.minimal.button', {
-            onclick: (evt) => {
+            onclick: (evt: Event) => {
               evt.preventDefault();
-              mode.onChange(null, { submit: true });
+              attrs.onchange(null, { submit: true });
             },
           }, '🗙'),
         )
       ),
       m('button.button', {
         form: form,
-        onclick: (evt) => {
+        onclick: (evt: Event) => {
           evt.preventDefault();
-          mode.onChange(attrs.value, { submit: true });
+          attrs.onChange(childAttrs.value, { submit: true });
         },
       }, searchText ?? 'Search'),
     ]);

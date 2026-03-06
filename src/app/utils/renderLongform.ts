@@ -82,7 +82,12 @@ export function renderLongform(
         iri += '?' + new URLSearchParams(args as Record<string, string>).toString();
       }
 
-      return arg1.o.store.text(iri, 'text/longform');
+      const text = arg1.o.store.text(iri, {
+        accept: 'text/longform',
+      })
+
+
+      return text;
     };
 
     return longformRenderer;
