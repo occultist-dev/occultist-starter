@@ -1,7 +1,7 @@
 import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
 import {renderLongform} from '#utils/renderLongform.ts';
 import type {SSRView} from '@occultist/extensions';
-import {OctironForm, OctironSubmitButton, type Predicate} from '@octiron/octiron';
+import {Debug, OctironForm, OctironSubmitButton, type Predicate} from '@octiron/octiron';
 import m from 'mithril';
 
 
@@ -48,21 +48,14 @@ export const main: SSRView = (args) => {
           m('.card', 'No results')
         )),
 
-        x.success('oct:members', y =>
+        x.success('oct:members', {
+        }, y =>
           m('.thin.inline.card',
             m('header.start',
 
               y.perform('oct:actions SetTodoStatusAction', {
                 submitOnChange: true,
-                readonlyFallback: true,
-                onSubmitSuccess: setTodoStatus => {
-                  x.submit().then(() => {
-                    setTodoStatus.update({
-                      todoUUID: y.get('oct:uuid'),
-                      todoStatus: y.get('todoStatus'),
-                    }, { submit: false });
-                  });
-                },
+                onSubmitSuccess: () => x.submit(),
                 fallback: y.select('todoStatus'),
                 initialValue: {
                   todoUUID: y.get('oct:uuid'),

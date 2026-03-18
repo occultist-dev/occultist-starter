@@ -160,6 +160,8 @@ export const todoListing = rootScope.http.get('/todos{?todoStatus,search,page,pa
      , t.uuid                                "uuid"
      , datetime(t.create_time, 'unixepoch')  "createTime"
      , datetime(t.update_time, 'unixepoch')  "updateTime"
+     , datetime(t.complete_time, 'unixepoch')    "completeTime"
+     , t.status                                  "todoStatus"
      , t.title                               "title"
      , t.description                         "description"
    from todos t
@@ -222,6 +224,8 @@ const insertTodoStatement = db.prepare<{
     , uuid                                  "uuid"
     , datetime(create_time, 'unixepoch')    "createTime"
     , datetime(update_time, 'unixepoch')    "updateTime"
+    , datetime(complete_time, 'unixepoch')  "completeTime"
+    , status                                "todoStatus"
     , title                                 "title"
     , description                           "description"
 `);
@@ -298,6 +302,8 @@ const updateTodoStatement = db.prepare<{
     , uuid                                  "uuid"
     , datetime(create_time, 'unixepoch')    "createTime"
     , datetime(update_time, 'unixepoch')    "updateTime"
+    , datetime(complete_time, 'unixepoch')  "completeTime"
+    , status                                "todoStatus"
     , title                                 "title"
     , description                           "description"
 `);

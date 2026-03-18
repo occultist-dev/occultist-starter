@@ -8,11 +8,10 @@ type TodoStatus =
 ;
 
 
-export const EditTodoStatus: AnyComponent<TodoStatus> = {
-
-  view({ attrs }) {
-    if (attrs.renderType === 'present') {
-      switch (attrs.value) {
+export const EditTodoStatus: AnyComponent<TodoStatus, { updated: boolean }> = {
+  view(vnode) {
+    if (vnode.attrs.renderType === 'present') {
+      switch (vnode.attrs.value) {
         case 'in-progress': return 'In progress';
         case 'complete': return 'Complete';
       }
@@ -20,15 +19,12 @@ export const EditTodoStatus: AnyComponent<TodoStatus> = {
     }
 
     return m('select', {
-      ...attrs.attrs,
-      value: attrs.value,
-      disabled: attrs.spec.readonly,
-      multiple: attrs.spec.multiple,
+      ...vnode.attrs.attrs,
+      value: vnode.attrs.value,
+      disabled: vnode.attrs.spec.readonly,
+      multiple: vnode.attrs.spec.multiple,
       oninput: (evt) => {
-        attrs.onChange(evt.target.value);
-      },
-      onselect: (evt) => {
-        console.log('EVT', evt);
+        vnode.attrs.onChange(evt.target.value);
       },
     },
       m('option[value=planned]', 'Planned'),
