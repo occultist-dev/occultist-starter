@@ -1,12 +1,12 @@
 import type {AnyComponent} from '@octiron/octiron';
 import m from 'mithril';
 
+
 type TodoStatus =
   | 'planned'
   | 'in-progress'
   | 'complete'
 ;
-
 
 export const EditTodoStatus: AnyComponent<TodoStatus, { updated: boolean }> = {
   view(vnode) {
@@ -27,10 +27,9 @@ export const EditTodoStatus: AnyComponent<TodoStatus, { updated: boolean }> = {
         vnode.attrs.onChange(evt.target.value);
       },
     },
-      m('option[value=planned]', 'Planned'),
-      m('option[value=in-progress]', 'In progress'),
-      m('option[value=complete]', 'Complete'),
+      m('option[value=planned]', { selected: vnode.attrs.value === 'planned' }, 'Planned'),
+      m('option[value=in-progress]', { selected: vnode.attrs.value === 'in-progress' }, 'In progress'),
+      m('option[value=complete]', { selected: vnode.attrs.value === 'complete' }, 'Complete'),
     );
-  }
-
+  },
 };

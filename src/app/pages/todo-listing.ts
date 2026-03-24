@@ -1,7 +1,7 @@
 import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
 import {renderLongform} from '#utils/renderLongform.ts';
 import type {SSRView} from '@occultist/extensions';
-import {Debug, OctironForm, OctironSubmitButton, type Predicate} from '@octiron/octiron';
+import {OctironForm, OctironPerformArgs, OctironSubmitButton, type Predicate} from '@octiron/octiron';
 import m from 'mithril';
 
 
@@ -14,16 +14,47 @@ const isPopulated = (termOrType: string): Predicate => (o) => {
   return true;
 }
 
+const interceptor: OctironPerformArgs['interceptor'] = ({ o, prev, next }) => {
+  const url = new URL(document.location.toString());
+
+  const search = next[o.expand('oct:search')] as string;
+  let page = next[o.expand('oct:page')] as number;
+
+  if (search !== prev[o.expand('oct:search')]) {
+    page = 1;
+    next[o.expand('oct:page')] = page;
+  }
+
+  if (search == null || search === '') {
+    url.searchParams.delete('search');
+  } else {
+    url.searchParams.set('search', search);
+  }
+
+  if (page == null || page <= 1) {
+    url.searchParams.delete('page');
+  } else {
+    url.searchParams.set('page', page.toString());
+  }
+
+  history.pushState(null, null, url);
+
+  return next;
+}
+
 export const main: SSRView = (args) => {
   const { o, location } = args;
+
   const l = renderLongform(args);
 
   return o.perform('oct:actions ListTodosAction', {
     mainEntity: true,
     submitOnInit: true,
     submitOnChange: true,
+    interceptor,
     initialValue: {
       'oct:search': location.searchParams.get('search'),
+      'oct:page': Number(location.searchParams.get('page') ?? 1),
     },
   }, x => [
     m(OctironForm, { o: x },
@@ -44,15 +75,17 @@ export const main: SSRView = (args) => {
       ),
 
       m('.narrow.list', 
+        x.failure(
+          m('.card', 'Something went wrong'),
+        ),
+
         x.success(o => o.not(isPopulated('oct:members'),
           m('.card', 'No results')
         )),
 
-        x.success('oct:members', {
-        }, y =>
+        x.success('oct:members', y =>
           m('.thin.inline.card',
-            m('header.start',
-
+            m('.start',
               y.perform('oct:actions SetTodoStatusAction', {
                 submitOnChange: true,
                 onSubmitSuccess: () => x.submit(),
@@ -80,10 +113,8 @@ export const main: SSRView = (args) => {
                 }),
               ),
             ),
-            
           ),
         ),
-
       ),
 
       x.select('oct:page', o =>

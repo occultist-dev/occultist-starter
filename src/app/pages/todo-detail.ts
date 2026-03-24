@@ -1,49 +1,75 @@
 import m from 'mithril';
 import {type SSRView} from "@occultist/extensions"
+import {OctironForm, OctironSubmitButton} from '@octiron/octiron';
+import {EditFormGroup} from '#type-handlers/EditFormGroup.ts';
+import {EditTextAsTextArea} from '#type-handlers/EditTextAsTextArea.ts';
 import {renderLongform} from '#utils/renderLongform.ts';
 
 
-export const head: SSRView = ({ o, location }) => {
-  return o.enter(location, o => [
-    m('title', o.get<string>('oct:title')),
-
-    o.select('oct:description', o => m('meta', {
-      name: 'description',
-      content: o.value,
-    })),
+export const head: SSRView = (page) => {
+  return page.o.enter(page.location, {
+    loading: m('title', '...'),
+    fallback: m('title', 'Not found'),
+  }, o => [
+    o.select('oct:title', o => m('title', o.value as string)),
+    o.select('oct:description', o => m('meta[name=description]', { content: o.value })),
   ]);
 }
 
-export const body: SSRView = ({ o, location }) => {
-  let messageEl: m.Children;
-  const message = location.searchParams.get('message');
+export const main: SSRView = (page) => {
+  const l = renderLongform(page);
 
-  if (message != null) {
-    messageEl = m('aside.callout.success', message);
-  }
-
-  return o.enter(location, {
+  return page.o.enter(page.location, {
     mainEntity: true,
     fallback: m('h1', 'Not found'),
     loading: m('h1', 'Loading'),
   }, o => [
-    m('header', [
-      m('h1', o.get<string>('oct:title')),
+    m('main.list', 
+      o.perform('oct:actions UpdateTodosAction', {
+        initialValue: {
+          'oct:uuid': o.get('oct:uuid'),
+          'oct:title': o.get('oct:title'),
+          'oct:description': o.get('oct:description'),
+        },
+      }, o =>
+        m(OctironForm, { o },
+          o.problem.detail && 
+            m('.error.card', o.problem.detail),
+          
+          o.select('oct:title', {
+            component: EditFormGroup,
+            attrs: { label: l.text('title') },
+          }),
 
-      m('nav',
-        m('li', m('a[href=/]', 'Home')),
-        m('li', m('a[href=/todos]', 'Todos')),
-      ),
-    ]),
+          o.select('oct:description', {
+            component: EditFormGroup,
+            attrs: {
+              label: l.text('description'),
+              args: {
+                component: EditTextAsTextArea,
+                attrs: {
+                  rows: 8,
+                },
+              },
+            },
+          }),
 
-    messageEl,
-
-    m('main', 
-      o.select('oct:description', o =>
-        m('p.lede', o.value as string),
+          m('.action-row',
+            m('.end',
+              m(OctironSubmitButton, { o }, l('update-todo')),
+            ),
+          ),
+        ),
       ),
     ),
-  ]);
-}
 
-//export const footer = renderLongform('footer');
+    m('p', 
+      o.select('oct:title'),
+    ),
+
+    m('p',
+      o.select('oct:description'),
+    ),
+  ]);
+};
+

@@ -11,38 +11,28 @@ export type AnyFormGroupAttrs = {
   clearable?: boolean;
 } & m.Attributes;
 
-export const EditFormGroup: EditComponent<JSONValue, AnyFormGroupAttrs> = () => {
-  return {
-    view: ({ attrs: { o, attrs: {
-      label,
-      headerEnd,
-      footerStart,
-      footerEnd,
-      clearable,
-      ...componentAttrs
-    }, ...attrs} }) => {
-      return m('.form-group', componentAttrs, [
-        m('.form-group__header', {
-          for: o.id,
-        }, [
-          label != null ? m('label.form-group__header-start', { for: o.id }, label) : null,
-          headerEnd != null ? m('.form-group__header-end', headerEnd) : null,
-        ]),
-        m('.form-group__input', [
-          o.default(),
-          clearable ?? !attrs.spec.required
-            ? o.edit({
-              component: EditSetNull,
-              attrs: {
-                targetName: label,
-              },
-            }) : null,
-        ]),
-        m('.form-group__footer', [
-          footerStart != null ? m('.form-group__footer-start', footerStart) : null,
-          footerEnd != null ? m('.form-group__footer-end', footerEnd) : null,
-        ]),
-      ]);
-    },
-  };
-}
+export const EditFormGroup: EditComponent<JSONValue, AnyFormGroupAttrs> = {
+  view: (vnode) => {
+    return m('.form-group', vnode.attrs.attrs, [
+      m('.header.row',
+        vnode.attrs.attrs.label != null &&
+          m('label.start', { for: vnode.attrs.o.id }, vnode.attrs.attrs.label),
+        vnode.attrs.attrs.headerEnd != null &&
+          m('.end', vnode.attrs.attrs.headerEnd),
+      ),
+      m('.body.row',
+        vnode.attrs.o.default(vnode.attrs.attrs.args),
+        (vnode.attrs.attrs.clearable ?? !vnode.attrs.spec.required) && vnode.attrs.o.edit({
+          component: EditSetNull,
+          attrs: {
+            targetName: vnode.attrs.attrs.label,
+          },
+        })
+      ),
+      m('.footer.row',
+        vnode.attrs.o.problem.detail &&
+          m('span.problem', vnode.attrs.o.problem.detail),
+      ),
+    ]);
+  },
+};

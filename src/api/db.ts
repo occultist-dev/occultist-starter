@@ -1,10 +1,11 @@
-import Database from 'better-sqlite3';
+//import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 import {randomUUID} from 'node:crypto';
 
 
-export const db = new Database('dev.db');
+export const db = new DatabaseSync('dev.db');
 
-db.pragma("journal_mode = WAL");
+//db.pragma("journal_mode = WAL");
 
 
 const statements = [

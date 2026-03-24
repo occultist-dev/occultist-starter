@@ -422,6 +422,11 @@
   	    }
       }
     }
+
+    &.error {
+      background-color: red;
+      color: white;
+    }
   }
 
   .row {
@@ -555,6 +560,15 @@
     display: flex;
     flex-direction: column;
     gap: .5rem;
+
+    > .header:is(:empty), > .footer:is(:empty) {
+      display: none;
+    }
+
+    > .footer > .problem {
+      color: red;
+      font-weight: strong;
+    }
   }
 
   .control-group {

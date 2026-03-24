@@ -13,6 +13,7 @@
     "searchdialog",
     "todos",
     "unixepoch",
-    "vdom"
+    "vdom",
+    "vnode"
   ]
 }

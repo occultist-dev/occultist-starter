@@ -42,9 +42,9 @@ export const EditSearch: AnyComponent<string, EditSearchAttrs> = {
           m('button.small.minimal.button', {
             onclick: (evt: Event) => {
               evt.preventDefault();
-              attrs.onchange(null, { submit: true });
+              attrs.onChange('', { submit: true });
             },
-          }, '🗙'),
+          }, 'Clear'),
         )
       ),
       m('button.button', {

@@ -74,6 +74,7 @@ export function renderLongform(
     longformRenderer.text = (fragment, args) => {
       const url = new URL(arg1.location);
 
+      url.search = '';
       url.hash = fragment;
 
       let iri = url.toString();
@@ -97,8 +98,16 @@ export function renderLongform(
     arg2 += '?' + new URLSearchParams(templateArgs as Record<string, string>).toString();
   }
 
-  return arg1.o.enter((arg1.location as URL).toString(), {
-    fragment: arg2 as string ?? undefined,
+  let url: URL;
+
+  if (arg1.location instanceof URL || typeof arg1 === 'string') {
+    url = new URL(arg1.location);
+    url.search = '';
+  }
+
+  return arg1.o.enter(url, {
+    fragment: arg2 as string,
     accept: 'text/longform',
   });
 }
+
